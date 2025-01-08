@@ -8,7 +8,8 @@ Components used:
 - Arduino UNO;
 - DHT22 Module;
 - HC05 Bluetooth Module;
-- LCD 16x2.
+- LCD 16x2;
+- Basic led's.
 
 App used:
 "DHT11  with Bluetooth" available on the Play Store (Android);
