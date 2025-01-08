@@ -9,7 +9,7 @@ Components used:
 - DHT22 Module;
 - HC05 Bluetooth Module;
 - LCD 16x2;
-- Basic led's.
+- Basic leds.
 
 App used:
 "DHT11  with Bluetooth" available on the Play Store (Android);
