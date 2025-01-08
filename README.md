@@ -10,4 +10,7 @@ Components used:
 - HC05 Bluetooth Module
 - LCD 16x2
 
+App used:
+"DHT11  with Bluetooth" available on the Play Store (Android);
+
 #Installation instructions in code
