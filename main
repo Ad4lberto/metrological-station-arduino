@@ -1,0 +1,90 @@
+#include <DHT.h>
+#include <DHT_U.h>
+#include <SoftwareSerial.h>
+
+#define DHTPIN 2         // Pino digital onde o sensor DHT está conectado
+#define DHTTYPE DHT22    // Tipo de sensor DHT (DHT22, AM2302, AM2321)
+#define LED_PIN_13 13    // Pino onde o LED de piscar está conectado
+#define LED_PIN_6 6      // Pino onde o LED inicial está conectado
+#define LED_PIN_5 5      // Pino onde o LED final está conectado
+
+// Inicialize o sensor DHT
+DHT dht(DHTPIN, DHTTYPE);
+
+// Defina os pinos para a comunicação com o módulo Bluetooth HC-05
+#define RX_PIN 10
+#define TX_PIN 11
+
+// Inicialize a comunicação serial via SoftwareSerial
+SoftwareSerial bluetooth(RX_PIN, TX_PIN);
+
+unsigned long previousMillis = 0; // Armazena o último tempo
+const long interval = 5000; // Intervalo de 5 segundos
+bool primeiraMedicao = true; // Flag para a primeira medição
+
+void setup() {
+  // Inicialize a comunicação serial para o monitor serial
+  Serial.begin(9600);
+  Serial.println(F("\n \n Projeto fic"));
+
+  // Inicialize a comunicação serial para o módulo Bluetooth HC-05
+  bluetooth.begin(9600);
+
+  // Inicialize o sensor DHT
+  dht.begin();
+
+  // Configure os pinos dos LEDs como saída
+  pinMode(LED_PIN_13, OUTPUT); // LED de piscar
+  pinMode(LED_PIN_6, OUTPUT);  // LED inicial
+  pinMode(LED_PIN_5, OUTPUT);  // LED final
+
+  // Ligue o LED inicial (pino 6) no início
+  digitalWrite(LED_PIN_6, HIGH);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+
+  // Verifique se é hora de realizar a próxima leitura
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+
+    // Pisca o LED de medição (pino 13)
+    digitalWrite(LED_PIN_13, HIGH);
+    delay(100);
+    digitalWrite(LED_PIN_13, LOW);
+
+    // Leia a umidade e a temperatura do sensor DHT
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+    float f = dht.readTemperature(true);
+
+    // Verifique se alguma leitura falhou e tente novamente
+    if (isnan(h) || isnan(t)) {
+      Serial.println(F("Falha de leitura do sensor DHT!"));
+      return;
+    }
+
+    // Apague o LED inicial (pino 6) e ligue o LED final (pino 5) após a primeira medição
+    if (primeiraMedicao) {
+      digitalWrite(LED_PIN_6, LOW);  // Apaga o LED inicial
+      digitalWrite(LED_PIN_5, HIGH); // Acende o LED final
+      primeiraMedicao = false;       // Define que a primeira medição já ocorreu
+    }
+
+    // Exiba os valores no monitor serial
+    Serial.print(F("Umidade: "));
+    Serial.print(h);
+    Serial.print(F("%  Temperatura: "));
+    Serial.print(t);
+    Serial.print(F("°C \n"));
+
+    // Envie os valores via Bluetooth em formato JSON
+    String str1 = String(t, 2);
+    String str2 = String(h, 2);
+    String str3 = String(f, 2);
+    String my_String = "{'data':[{'data1':'" + str1 + "','data2':'" + str2 + "','data3':'" + str3 + "'}]}";
+    bluetooth.print(my_String);  
+    bluetooth.println(""); 
+  }
+}
