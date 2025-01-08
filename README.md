@@ -5,10 +5,10 @@ It is worth noting that the project competed in the "Science Circuit of Public S
 In order to make the necessary meteorological measurements for the written project, it stood out for the accuracy of the data and the low cost required for construction.
 
 Components used:
-- Arduino UNO
-- DHT22 Module
-- HC05 Bluetooth Module
-- LCD 16x2
+- Arduino UNO;
+- DHT22 Module;
+- HC05 Bluetooth Module;
+- LCD 16x2.
 
 App used:
 "DHT11  with Bluetooth" available on the Play Store (Android);
